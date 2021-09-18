@@ -1,0 +1,74 @@
+{
+  "min_packer_version": "1.6.3",
+  "builders": [{
+    "type"                : "vmware-iso",
+    "vm_name"             : "{{ user `vm_name` }}",
+    "guest_os_type"       : "{{ user `vm_guest_os_type` }}",
+    "tools_upload_flavor" : "linux",
+    "version"             : "{{ user `vm_version` }}",
+    "disk_type_id"        : "thin",
+    "disk_size"           : "{{ user `vm_disk_size` }}",
+    "vmdk_name"           : "{{ user `vm_name` }}",
+    "keep_registered"     : true,
+    "skip_export"         : true,
+
+    "vnc_over_websocket" : true,
+    "insecure_connection": true,      
+    "remote_type"        : "esx5",
+    "remote_host"        : "{{ user `esxi_host` }}",
+    "remote_datastore"   : "{{ user `esxi_host_datastore` }}",
+    "remote_username"    : "{{ user `esxi_host_username` }}",
+    "remote_password"    : "{{ user `esxi_host_password` }}",
+    "ssh_username"       : "{{ user `vm_ssh_username` }}",
+    "ssh_password"       : "{{ user `vm_ssh_password` }}",
+    "ssh_port"           : 22,
+    "ssh_timeout"        : "30m",
+
+    "shutdown_command": "echo {{ user `vm_ssh_password` }} | sudo -S shutdown -P now",
+    "shutdown_timeout": "1000s",
+
+    "vmx_data": {
+      "numvcpus"             : "2",
+      "memsize"              : "2048",
+      "ethernet0.networkName": "{{ user `vm_network` }}",
+      "disk.EnableUUID"      : true
+    },
+
+    "iso_url"        : "{{ user `iso_url` }}",
+    "iso_checksum"   : "{{ user `iso_checksum` }}",
+
+    "boot_wait"   : "5s",
+    "http_bind_address": "{{user `http_server`}}",
+    "http_port_min"    : 8000,
+    "http_port_max"    : 8000,
+    "http_directory"   : "http",
+    "boot_command": [
+      "<esc><wait><esc><wait><esc><wait><enter><wait>",
+      "/casper/vmlinuz",
+      " initrd=/casper/initrd quiet",
+      " autoinstall",
+      " net.ifnames=0",
+      " biosdevname=0",
+      " ipv6.disable=1",
+      " ip={{user `vm_ip`}}",
+      " ds=nocloud-net;s=http://{{user `http_server`}}:{{ .HTTPPort }}/",
+      " --- <enter>"
+    ]
+  }],
+  
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+        "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 3; done",
+        "#### REMOVE SWAP START ####",
+        "#df -h",
+        "#echo 'Removendo swap...'",
+        "#sudo swapoff /swap.img",
+        "#sudo rm /swap.img",
+        "#sudo sed -ri '/\\sswap\\s/s/^#?/#/' /etc/fstab",
+        "df -h",
+        "#### REMOVE SWAP END ####",
+        "echo 'Good bye! [Jota]'"
+    ]
+  }]
+}

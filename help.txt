@@ -1,0 +1,49 @@
+"192.168.0.100::192.168.0.1:255.255.255.0:nmd-cli-3:eth0:none:8.8.8.8:9.9.9.9"
+       ^              ^           ^           ^       ^           ^      ^
+       |              |           |           |       |           |      |
+       IP            GW         MASK       HOSTNAME   |          DNS1   DNS2
+                                                   INTERFACE
+
+
+esxcli system settings advanced set -o /Net/GuestIPHack -i 1
+
+ISO [ESX1] packer_cache/focal-live-server-amd64.iso
+
+
+--------------------------------------------------------------------------------
+Gerar password para para setar na vm (no exemplo, foi digitado Padrao@2020):
+
+$ openssl passwd -6 -salt xyz Padrao@2020
+$6$xyz$P8oaSFVh05lVOMqvGpzeC3kU/DYaNE3wc5r7YhXkRZNwI1zUW2EF7Z67Gw6rEsenY0OOF8V4oJ9C1Tgsa2JPn/
+
+--------------------------------------------------------------------------------
+Para logs:
+
+    export PACKER_LOG=1
+    export PACKER_LOG_PATH="packer.log"
+
+--------------------------------------------------------------------------------
+Executar (true) ou não executar (false) o update durante a instalação (em http/user-data):
+
+#cloud-config
+autoinstall:
+  .
+  .
+  .
+  user-data:
+    .
+    .
+    package_upgrade: true (executar)
+
+    - open-vm-tools
+    - ufw
+    - net-tools
+    - nfs-common
+
+--------------------------------------------------------------------------------
+https://askubuntu.com/questions/1242731/ubuntu-20-04-multipath-configuration
+
+
+disk.EnableUUID = "TRUE"
+
+--------------------------------------------------------------------------------

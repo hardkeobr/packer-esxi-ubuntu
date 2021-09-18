@@ -1,0 +1,42 @@
+#cloud-config
+autoinstall:
+  version: 1
+  early-commands:
+    - systemctl stop ssh # otherwise packer tries to connect and exceed max attempts
+  refresh-installer:
+    update: yes
+  locale: en_US
+  keyboard:
+    layout: br
+  network:
+    network:
+      version: 2
+      ethernets:
+        eth0:
+          dhcp4: false
+          dhcp6: false
+          addresses: [192.168.0.100/24]
+          gateway4: 192.168.0.1
+          nameservers:
+            search: []
+            addresses: [8.8.8.8, 9.9.9.9]
+          dhcp-identifier: mac
+  ssh:
+    install-server: true
+    #authorized-keys:
+    #  - ssh-ed25519
+    allow-pw: true
+  packages:
+    - ufw
+  identity:
+    hostname: nmd-cli-3
+    username: ubuntu
+    password: $6$xyz$P8oaSFVh05lVOMqvGpzeC3kU/DYaNE3wc5r7YhXkRZNwI1zUW2EF7Z67Gw6rEsenY0OOF8V4oJ9C1Tgsa2JPn/
+  user-data:
+    disable_root: false
+    package_upgrade: true
+    timezone: America/Sao_Paulo
+  late-commands:
+    - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+    - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 ipv6.disable=0 biosdevname=0"/' /target/etc/default/grub
+    - curtin in-target --target /target update-grub2

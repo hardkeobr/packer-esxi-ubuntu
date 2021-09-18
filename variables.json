@@ -1,0 +1,23 @@
+{
+  "esxi_host"          : "esx1.datacenter.corp",
+  "esxi_host_datastore": "ESX1",
+  "esxi_host_username" : "root",
+  "esxi_host_password" : "<senha-root-esxi>",
+  "vm_name"            : "nmd-cli-3",
+  "vm_version"         : "15",
+  "vm_guest_os_type"   : "ubuntu-64",
+  "vm_ssh_username"    : "ubuntu",
+  "vm_ssh_password"    : "Padrao@2020",
+  "vm_ssh_port"        : "22",
+  "vm_cpus"            : "2",
+  "vm_memory"         : "2048",
+  "vm_disk_size"       : "40960",
+  "vm_description"     : "Description: Deploy teste.",
+  "vm_network_card"    : "vmxnet3",
+  "vm_domain"          : "local",
+  "vm_network"         : "<network-group-id>",
+  "vm_ip"              : "192.168.0.100::192.168.0.1:255.255.255.0:nmd-cli-3:eth0:none:8.8.8.8:9.9.9.9",
+  "iso_url"            : "C:/isos/focal-live-server-amd64.iso",
+  "iso_checksum"       : "72d6594d783bc34a9bdbd409ebb83af3d306cb985f43a1c61f7d23ed7a3f4818",
+  "http_server"        : "192.168.0.200"
+}
